@@ -1,35 +1,70 @@
 import React, { Component, Fragment } from "react";
-
+import TodoItem from './TodoItem'
+import "./style.css"
 class TodoList extends Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-            inputValue: '',
-            list: []
-        }
+	constructor(props) {
+		super(props);
+		this.state = {
+			inputValue: '',
+			list: []
+		}
+		this.handleInputChange = this.handleInputChange.bind(this)
+		this.handleBtnClick = this.handleBtnClick.bind(this)
+		this.handleItemDelete = this.handleItemDelete.bind(this)
+	}
+	render() {
+		return (
+			<Fragment>
+				<div>
+					<input
+						className="input"
+						value={this.state.inputValue}
+						onChange={this.handleInputChange}
+					/>
+					<button
+						onClick={this.handleBtnClick}
+					>submit</button>
+				</div>
+				<ul>
+					{this.getTodoItem()}
+				</ul>
+			</Fragment>
+		)
+	}
 
-    }
-    render() {
-        return (
-            <Fragment>
-                <div>
-                    <input
-                        value={this.state.inputValue}
-                        onChange={this.handleInputChange.bind(this)}
-                    />
-                    <button>submit</button>
-                </div>
-                <ul>
-                    <li>React</li>
-                </ul>
-            </Fragment>
-        )
-    }
-    handleInputChange(e){
-        this.setState({
-            inputValue: e.target.value
-        })
-    }
+	getTodoItem() {
+		return this.state.list.map((item, index) => {
+			return (
+				<TodoItem
+					content={item}
+					index={index}
+					deleteItem={this.handleItemDelete}
+				/>
+			)
+		})
+	}
+
+	// now it is asynchornious
+	// needs to first save the variable
+	handleInputChange(e){
+		const value = e.target.value
+		this.setState(() => ({
+			inputValue: value
+		}))
+	}
+	handleBtnClick(){
+		this.setState((prevState) => ({
+			list: [...prevState.list, prevState.inputValue],
+			inputValue: ''
+		}))
+	}
+	handleItemDelete(index){
+		this.setState((prevState) => {
+			const list = [...prevState.list]
+			list.splice(index, 1)
+			return {list}
+		})
+	}
 }
 
 export default TodoList;
