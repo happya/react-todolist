@@ -1,9 +1,12 @@
 import React, { Component, Fragment } from "react";
+import axios from 'axios'
 import TodoItem from './TodoItem'
 import "./style.css"
 class TodoList extends Component{
 	constructor(props) {
 		super(props);
+		// when the state or props is changed
+		// the render function will re-execute
 		this.state = {
 			inputValue: '',
 			list: []
@@ -20,6 +23,7 @@ class TodoList extends Component{
 						className="input"
 						value={this.state.inputValue}
 						onChange={this.handleInputChange}
+						ref={(input) => {this.input = input}}
 					/>
 					<button
 						onClick={this.handleBtnClick}
@@ -31,13 +35,20 @@ class TodoList extends Component{
 			</Fragment>
 		)
 	}
-
+	componentDidMount() {
+		axios.get('/api/todolist').then(() => {
+			alert('axios success')
+		}).catch(() => {
+			alert('axios failed')
+		})
+	}
 	getTodoItem() {
 		return this.state.list.map((item, index) => {
 			return (
 				<TodoItem
 					content={item}
 					index={index}
+					key={index}
 					deleteItem={this.handleItemDelete}
 				/>
 			)
@@ -47,7 +58,8 @@ class TodoList extends Component{
 	// now it is asynchornious
 	// needs to first save the variable
 	handleInputChange(e){
-		const value = e.target.value
+		// e.target: dom node
+		const value = this.input.value
 		this.setState(() => ({
 			inputValue: value
 		}))
