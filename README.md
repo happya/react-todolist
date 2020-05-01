@@ -1,68 +1,93 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a tiny project to keep record of my learning process of React.JS. Starting from the basic `TodoList` project, we can learn a lot of basics of React.
 
-## Available Scripts
+## ```Virtual DOM```
 
-In the project directory, you can run:
+动机：For efficient rendering.
 
-### `npm start`
+#### ```Normal steps```
+  - step1: state 数据
+  - step2: JSX模板
+  - step3: 数据+模板，生成真实dom，来显示
+  - state发生改变
+  - 数据+模板结合，生成真实dom,贴换原始dom
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+#### 缺陷：
+- 第一次生成了完整的dom片段
+- 第二次生成了完整的dom片段
+- 第二次的dom替换第一次的，非常耗性能
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+#### ```Improve idea 1```
+- state数据
+- jsx模板
+- 数据+模板生成真实dom
+- state改变
+- 数据+模板结合，生成真实dom,并不直接替换原始的dom
+- 新的dom和原始的dom作比对，找差异
+- 只用新的dom的发生变化的元素，替换到老的dom中的元素
 
-### `npm test`
+#### 缺陷：
+ - 性能提升不明显
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+#### ```Improve idea 2```
+  - step1: state 数据
+  - step2: JSX模板
+  - step3: 数据+模板，生成真实dom，来显示
+  -生成虚拟dom(一个js对象，用来描述真实的dom), 嵌套的标签属性和内容
+  - state发生变化
+  - 数据+模板生成新的虚拟dom
+  - 比较原始和新的虚拟dom的区别, 直接操作dom，更新
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### Benefits:
+  - 减小了对真实dom的创建
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+#### ```真实步骤```
+1. state 数据
+2. JSX模板
+3. 数据+模板生成虚拟dom
+4. 用虚拟dom生成真实dom，来显示
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+数据改变：
+1. 数据+模板生成新的虚拟dom
+2. 比较原始和新的虚拟dom的区别
+3. 直接操作dom，更新
 
-### `npm run eject`
+## 组件传值
+### 父组件向子组件传值： 属性(props)
+#### 变量
+父组件中:
+> `item`: 父组件中的变量
+子组件中：
+```react
+<ChildItem content={item} />
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+#### 也可以传递父组件中的函数
+父组件中:
+```react
+deleteItem={this.handleItemDelete}
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+子组件中：
+```react
+<div> { this.props.content} </div>
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### 子组件向父组件传值
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+1. 结构变量赋值
 
-## Learn More
+比如要使用`this.props.content`
+可以先定义结构数据： 
+```react
+const { content } = this.props
+```
+然后使用的时候可以直接使用content
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+2. this的绑定
+可以放在`constructor`里面
 
-### Code Splitting
+bind(this)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+prevState做状态改变：
